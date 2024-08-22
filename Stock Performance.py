@@ -51,24 +51,21 @@ def display_portfolio(portfolio, total_value):
 
 
 # this logice needs to be fixed. there is a problem with stock symbol handling and calculating the target value
-def calculate_rebalance(portfolio, total_value, new_investment, target_distribution):
-    new_allocation = {}
+def calculate_rebalance(portfolio, total_value, target_distribution):
+    new_allocation = []
     for stock in portfolio:
         symbol = stock['symbol']
         current_value = stock['stock_value']
         target_value = total_value * (target_distribution[symbol] / 100)
         additional_investment = max(0, target_value - current_value)
-        new_allocation[symbol] = additional_investment
-    
-    total_additional_investment = sum(new_allocation.values())
-    
-    for symbol, amount in new_allocation.items():
-        new_allocation[symbol] = (amount / total_additional_investment) * new_investment
-    
+        rebalance_shares = additional_investment / get_stock_data(symbol) 
+        new_allocation.append({'symbol': symbol, 'additional_investment': additional_investment, 
+                               'rebalance_shares': rebalance_shares})
     for stock in portfolio:
         symbol = stock['symbol']
-        stock['new_investment'] = new_allocation[symbol]
-        stock['new_shares'] = stock['new_investment'] / stock['current_price']
+        matching_allocation = next(item for item in new_allocation if item['symbol'] == symbol)
+        stock['new_investment'] =matching_allocation['additional_investment']
+        stock['new_shares'] = matching_allocation['rebalance_shares']
     
     return portfolio
 
@@ -103,9 +100,9 @@ def main():
     portfolio, total_value = calculate_portfolio(portfolio_data)
     display_portfolio(portfolio, total_value)
     
-    rebalance = input("Do you want to rebalance your portfolio with a new investment? (yes/no): ").lower()
+    rebalance = input("Do you want to rebalance your portfolio with a new investment? (y/n): ").lower()
     
-    if rebalance == 'yes':
+    if rebalance == 'y':
         target_distribution = {}
         
         while True: 
@@ -130,10 +127,16 @@ def main():
             
             else:
                 break
-            
         
-        new_investment = float(input("Enter the amount you want to invest: "))
-        portfolio = calculate_rebalance(portfolio, total_value, new_investment, target_distribution)
+        print(portfolio)
+        print("\n")
+        print(total_value)
+        print(target_distribution)
+        
+        # might need to add the new investment to total value        
+        
+        total_value += float(input("Enter the amount you want to invest: "))
+        portfolio = calculate_rebalance(portfolio, total_value, target_distribution)
         display_rebalance_plan(portfolio)
 
 if __name__ == "__main__":
