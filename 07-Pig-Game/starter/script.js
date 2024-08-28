@@ -27,10 +27,14 @@ function updateScore() {
       if (player === "#current--0") {
         currentScore = 0;
         document.querySelector(player).textContent = currentScore;
+        document.querySelector('.player--0').classList.remove('player--active');
+        document.querySelector('.player--1').classList.add('player--active');
         return (player = "#current--1");
       } else {
         currentScore = 0;
         document.querySelector(player).textContent = currentScore;
+        document.querySelector('.player--1').classList.remove('player--active');
+        document.querySelector('.player--0').classList.add('player--active');
         return (player = "#current--0");
       }
     case 2:
@@ -60,6 +64,8 @@ function holdScore() {
     score = "#score--0";
     playerOneScore += currentScore;
     document.querySelector(score).textContent = playerOneScore;
+    document.querySelector('.player--0').classList.remove('player--active');
+    document.querySelector('.player--1').classList.add('player--active');
     return (player = "#current--1", currentScore = 0); 
   }
 
@@ -67,6 +73,8 @@ function holdScore() {
     score = "#score--1";
     playerTwoScore += currentScore;
     document.querySelector(score).textContent = playerTwoScore;
+    document.querySelector('.player--1').classList.remove('player--active');
+    document.querySelector('.player--0').classList.add('player--active');
     return (player = "#current--0", currentScore = 0);
   }
 }
@@ -75,13 +83,14 @@ function newGame() {
   playerOneScore = 0;
   playerTwoScore = 0;
   currentScore = 0;
+  player = "#current--0";
+  document.querySelector('.player--0').classList.add('player--active');
+  document.querySelector('.player--1').classList.remove('player--active');
   document.querySelectorAll(".score")[0].textContent = 0;
   document.querySelectorAll(".score")[1].textContent = 0;
   document.querySelectorAll(".current-score")[0].textContent = 0;
   document.querySelectorAll(".current-score")[1].textContent = 0;
-
   // remember that querySelector only applies to the first one that matches its condition
-
 }
 
 function updateBackground() {
