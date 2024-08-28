@@ -51,23 +51,100 @@ def display_portfolio(portfolio, total_value):
 
 
 # this logice needs to be fixed. there is a problem with stock symbol handling and calculating the target value
-def calculate_rebalance(portfolio, total_value, target_distribution):
+# also need to implement a logic to optimize the budget allocation, prioritizing the stock purchase 
+# that will bring the stock portfolio closer to the target.
+
+def rebalance_without_selling(portfolio, total_value, target_distribution):
     new_allocation = []
+    
+    # Calculate the total value available for rebalancing
     for stock in portfolio:
         symbol = stock['symbol']
         current_value = stock['stock_value']
         target_value = total_value * (target_distribution[symbol] / 100)
         additional_investment = max(0, target_value - current_value)
-        rebalance_shares = additional_investment / get_stock_data(symbol) 
-        new_allocation.append({'symbol': symbol, 'additional_investment': additional_investment, 
-                               'rebalance_shares': rebalance_shares})
+        
+        rebalance_shares = additional_investment / get_stock_data(symbol)
+        new_allocation.append({
+            'symbol': symbol, 
+            'additional_investment': additional_investment, 
+            'rebalance_shares': rebalance_shares
+        })
+    
+    # Include any new investments based on target distribution
+    for symbol in target_distribution.keys():
+        if symbol not in [stock['symbol'] for stock in portfolio]:
+            target_value = total_value * (target_distribution[symbol] / 100)
+            additional_investment = target_value
+            rebalance_shares = additional_investment / get_stock_data(symbol)
+            
+            new_allocation.append({
+                'symbol': symbol, 
+                'additional_investment': additional_investment, 
+                'rebalance_shares': rebalance_shares
+            })
+    
+    
+    print(new_allocation)
+    print("\n")
+    print(portfolio)
+    
+    # Update the portfolio with the new allocation
     for stock in portfolio:
-        symbol = stock['symbol']
-        matching_allocation = next(item for item in new_allocation if item['symbol'] == symbol)
-        stock['new_investment'] =matching_allocation['additional_investment']
+        matching_allocation = next(item for item in new_allocation if item['symbol'] == stock['symbol'])
+        stock['new_investment'] = matching_allocation['additional_investment']
         stock['new_shares'] = matching_allocation['rebalance_shares']
+        
+    for stock in portfolio: 
+        if stock['symbol'] not in [portfolio_stock['symbol'] for portfolio_stock in new_allocation]:
+            symbol = [portfolio_stock['symbol']
+            portfolio.append({
+                'symbol': [portfolio_stock['symbol'],
+                'amount': 0,
+                'avg_price': get_stock_data(symbol),
+                'current_price': get_stock_data(symbol),
+                
+                'additional_investment': additional_investment, 
+                'rebalance_shares': rebalance_shares
+            })
+                          
     
     return portfolio
+
+
+# def rebalance_without_selling(portfolio, total_value, target_distribution):
+#     new_allocation = []
+#     for stock in portfolio:
+#         symbol = stock['symbol']
+#         current_value = stock['stock_value']
+#         target_value = total_value * (target_distribution[symbol] / 100)
+#         additional_investment = max(0, target_value - current_value)
+#         rebalance_shares = additional_investment / get_stock_data(symbol) 
+#         new_allocation.append({'symbol': symbol, 'additional_investment': additional_investment, 
+#                                'rebalance_shares': rebalance_shares})
+    
+#     for stock in portfolio:
+#         symbol = stock['symbol']
+#         matching_allocation = next(item for item in new_allocation if item['symbol'] == symbol)
+#         stock['new_investment'] = matching_allocation['additional_investment']
+#         stock['new_shares'] = matching_allocation['rebalance_shares']
+    
+#     for stock in target_distribution.keys():
+#         for portfolio_stock in portfolio:
+#             if (stock != portfolio_stock['symbol']):
+#                 target_value = total_value * (target_distribution[symbol] / 100)
+#                 additional_investment = max(0, target_value)
+#                 rebalance_shares = additional_investment / get_stock_data(symbol) 
+#                 new_allocation.append({'symbol': symbol, 'additional_investment': additional_investment, 
+#                                        'rebalance_shares': rebalance_shares})
+    
+    
+#     print(portfolio)
+#     print("\n")
+#     print(new_allocation)
+    
+    
+#     return portfolio
 
 def display_rebalance_plan(portfolio):
     print("\nRebalance Plan:")
@@ -128,15 +205,12 @@ def main():
             else:
                 break
         
-        print(portfolio)
         print("\n")
-        print(total_value)
-        print(target_distribution)
         
         # might need to add the new investment to total value        
         
         total_value += float(input("Enter the amount you want to invest: "))
-        portfolio = calculate_rebalance(portfolio, total_value, target_distribution)
+        portfolio = rebalance_without_selling(portfolio, total_value, target_distribution)
         display_rebalance_plan(portfolio)
 
 if __name__ == "__main__":
