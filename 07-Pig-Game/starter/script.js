@@ -56,6 +56,8 @@ function updateScore() {
 
   currentScore += randomNumber;
   document.querySelector(player).textContent = currentScore;
+
+  winner();
 }
 
 function holdScore() {
@@ -93,14 +95,23 @@ function newGame() {
   // remember that querySelector only applies to the first one that matches its condition
 }
 
-function updateBackground() {
-  active.classList.remove("player--active");
-}
-
 rollDice.addEventListener("click", updateScore);
 holdDice.addEventListener("click", holdScore);
 updateGame.addEventListener("click", newGame);
 
+function winner() {
+  if (parseInt(document.querySelectorAll(".score")[0].textContent) >= 100) {
+    // remember that the text content is in strings.
+    document.querySelector('.player--0').classList.remove('player--active');
+    document.querySelector('.player--0').classList.add('player--winner');
+  };
+
+  if (parseInt(document.querySelectorAll(".score")[1].textContent) >= 100) {
+    document.querySelector('.player--1').classList.remove('player--active');
+    document.querySelector('.player--1').classList.add('player--winner');
+  };
+
+}
 
 /* Without the parentheses, I am just referencing the function. 
 With it, however, I am calling the function immediately and it thus executes even if 
