@@ -13,12 +13,11 @@ let currentScore = 0;
 
 // turn off the dice when the game starts
 
-dice.style.display = 'none'; // this hides the "dice"
+dice.style.display = "none"; // this hides the "dice"
 
 // rolls the dice and updates the score
 function updateScore() {
-
-  dice.style.display = ''; // revert back to its original 
+  dice.style.display = ""; // revert back to its original
   let randomNumber = Math.trunc(Math.random() * 6) + 1;
 
   switch (randomNumber) {
@@ -27,14 +26,14 @@ function updateScore() {
       if (player === "#current--0") {
         currentScore = 0;
         document.querySelector(player).textContent = currentScore;
-        document.querySelector('.player--0').classList.remove('player--active');
-        document.querySelector('.player--1').classList.add('player--active');
+        document.querySelector(".player--0").classList.remove("player--active");
+        document.querySelector(".player--1").classList.add("player--active");
         return (player = "#current--1");
       } else {
         currentScore = 0;
         document.querySelector(player).textContent = currentScore;
-        document.querySelector('.player--1').classList.remove('player--active');
-        document.querySelector('.player--0').classList.add('player--active');
+        document.querySelector(".player--1").classList.remove("player--active");
+        document.querySelector(".player--0").classList.add("player--active");
         return (player = "#current--0");
       }
     case 2:
@@ -56,28 +55,27 @@ function updateScore() {
 
   currentScore += randomNumber;
   document.querySelector(player).textContent = currentScore;
-
-  winner();
 }
 
 function holdScore() {
-
-  if (player === "#current--0")  {
+  if (player === "#current--0") {
     score = "#score--0";
     playerOneScore += currentScore;
     document.querySelector(score).textContent = playerOneScore;
-    document.querySelector('.player--0').classList.remove('player--active');
-    document.querySelector('.player--1').classList.add('player--active');
-    return (player = "#current--1", currentScore = 0); 
-  }
-
-  else {
+    document.querySelector(".player--0").classList.remove("player--active");
+    document.querySelector(".player--1").classList.add("player--active");
+    document.querySelector(player).textContent = 0;
+    winner();
+    return (player = "#current--1"), (currentScore = 0);
+  } else {
     score = "#score--1";
     playerTwoScore += currentScore;
     document.querySelector(score).textContent = playerTwoScore;
-    document.querySelector('.player--1').classList.remove('player--active');
-    document.querySelector('.player--0').classList.add('player--active');
-    return (player = "#current--0", currentScore = 0);
+    document.querySelector(".player--1").classList.remove("player--active");
+    document.querySelector(".player--0").classList.add("player--active");
+    document.querySelector(player).textContent = 0;
+    winner();
+    return (player = "#current--0"), (currentScore = 0);
   }
 }
 
@@ -86,8 +84,10 @@ function newGame() {
   playerTwoScore = 0;
   currentScore = 0;
   player = "#current--0";
-  document.querySelector('.player--0').classList.add('player--active');
-  document.querySelector('.player--1').classList.remove('player--active');
+  document.querySelector(".player--0").classList.add("player--active");
+  document.querySelector(".player--1").classList.remove("player--active");
+  document.querySelector(".player--0").classList.remove("player--winner");
+  document.querySelector(".player--1").classList.remove("player--winner");
   document.querySelectorAll(".score")[0].textContent = 0;
   document.querySelectorAll(".score")[1].textContent = 0;
   document.querySelectorAll(".current-score")[0].textContent = 0;
@@ -102,15 +102,14 @@ updateGame.addEventListener("click", newGame);
 function winner() {
   if (parseInt(document.querySelectorAll(".score")[0].textContent) >= 100) {
     // remember that the text content is in strings.
-    document.querySelector('.player--0').classList.remove('player--active');
-    document.querySelector('.player--0').classList.add('player--winner');
-  };
+    document.querySelector(".player--0").classList.remove("player--active");
+    document.querySelector(".player--0").classList.add("player--winner");
+  }
 
   if (parseInt(document.querySelectorAll(".score")[1].textContent) >= 100) {
-    document.querySelector('.player--1').classList.remove('player--active');
-    document.querySelector('.player--1').classList.add('player--winner');
-  };
-
+    document.querySelector(".player--1").classList.remove("player--active");
+    document.querySelector(".player--1").classList.add("player--winner");
+  }
 }
 
 /* Without the parentheses, I am just referencing the function. 
