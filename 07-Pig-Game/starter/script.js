@@ -1,92 +1,117 @@
 "use strict";
 
-// Selectors
 const rollDice = document.querySelector(".btn--roll");
 const holdDice = document.querySelector(".btn--hold");
 const updateGame = document.querySelector(".btn--new");
 const dice = document.querySelector(".dice");
-const player0El = document.querySelector(".player--0");
-const player1El = document.querySelector(".player--1");
-const scoreEls = document.querySelectorAll(".score");
-const currentEls = document.querySelectorAll(".current-score");
-
-let currentPlayer = 0;
-let scores = [0, 0];
+const active = document.querySelector(".player--active");
+let player = "#current--0";
+let score = "#score--0";
+let playerOneScore = 0;
+let playerTwoScore = 0;
 let currentScore = 0;
 
-// Hide the dice initially
-dice.style.display = "none";
+// turn off the dice when the game starts
 
-// Switch Player Function
-function switchPlayer() {
-  currentEls[currentPlayer].textContent = 0;
-  currentScore = 0;
-  currentPlayer = currentPlayer === 0 ? 1 : 0;
-  player0El.classList.toggle("player--active");
-  player1El.classList.toggle("player--active");
-}
+dice.style.display = "none"; // this hides the "dice"
 
-// Update Score Function
+// rolls the dice and updates the score
 function updateScore() {
-  dice.style.display = ""; // Show dice
-  const randomNumber = Math.trunc(Math.random() * 6) + 1;
-  dice.src = `dice-${randomNumber}.png`;
+  dice.style.display = ""; // revert back to its original
+  let randomNumber = Math.trunc(Math.random() * 6) + 1;
 
-  if (randomNumber === 1) {
-    switchPlayer();
-  } else {
-    currentScore += randomNumber;
-    currentEls[currentPlayer].textContent = currentScore;
+  switch (randomNumber) {
+    case 1:
+      dice.src = "dice-1.png";
+      if (player === "#current--0") {
+        currentScore = 0;
+        document.querySelector(player).textContent = currentScore;
+        document.querySelector(".player--0").classList.remove("player--active");
+        document.querySelector(".player--1").classList.add("player--active");
+        return (player = "#current--1");
+      } else {
+        currentScore = 0;
+        document.querySelector(player).textContent = currentScore;
+        document.querySelector(".player--1").classList.remove("player--active");
+        document.querySelector(".player--0").classList.add("player--active");
+        return (player = "#current--0");
+      }
+    case 2:
+      dice.src = "dice-2.png";
+      break;
+    case 3:
+      dice.src = "dice-3.png";
+      break;
+    case 4:
+      dice.src = "dice-4.png";
+      break;
+    case 5:
+      dice.src = "dice-5.png";
+      break;
+    case 6:
+      dice.src = "dice-6.png";
+      break;
   }
+
+  currentScore += randomNumber;
+  document.querySelector(player).textContent = currentScore;
 }
 
-// Hold Score Function
 function holdScore() {
-  scores[currentPlayer] += currentScore;
-  scoreEls[currentPlayer].textContent = scores[currentPlayer];
-  checkWinner();
-  switchPlayer();
-}
-
-// Check Winner Function
-function checkWinner() {
-  if (scores[currentPlayer] >= 100) {
-    document
-      .querySelector(`.player--${currentPlayer}`)
-      .classList.add("player--winner");
-    document
-      .querySelector(`.player--${currentPlayer}`)
-      .classList.remove("player--active");
-    disableButtons();
+  if (player === "#current--0") {
+    score = "#score--0";
+    playerOneScore += currentScore;
+    document.querySelector(score).textContent = playerOneScore;
+    document.querySelector(".player--0").classList.remove("player--active");
+    document.querySelector(".player--1").classList.add("player--active");
+    document.querySelector(player).textContent = 0;
+    winner();
+    return (player = "#current--1"), (currentScore = 0);
+  } else {
+    score = "#score--1";
+    playerTwoScore += currentScore;
+    document.querySelector(score).textContent = playerTwoScore;
+    document.querySelector(".player--1").classList.remove("player--active");
+    document.querySelector(".player--0").classList.add("player--active");
+    document.querySelector(player).textContent = 0;
+    winner();
+    return (player = "#current--0"), (currentScore = 0);
   }
 }
 
-// Disable Buttons After Win
-function disableButtons() {
-  rollDice.disabled = true;
-  holdDice.disabled = true;
-}
-
-// New Game Function
 function newGame() {
-  scores = [0, 0];
+  playerOneScore = 0;
+  playerTwoScore = 0;
   currentScore = 0;
-  currentPlayer = 0;
-
-  scoreEls.forEach((scoreEl) => (scoreEl.textContent = 0));
-  currentEls.forEach((currentEl) => (currentEl.textContent = 0));
-
-  player0El.classList.add("player--active");
-  player1El.classList.remove("player--active");
-  player0El.classList.remove("player--winner");
-  player1El.classList.remove("player--winner");
-
-  rollDice.disabled = false;
-  holdDice.disabled = false;
-  dice.style.display = "none";
+  player = "#current--0";
+  document.querySelector(".player--0").classList.add("player--active");
+  document.querySelector(".player--1").classList.remove("player--active");
+  document.querySelector(".player--0").classList.remove("player--winner");
+  document.querySelector(".player--1").classList.remove("player--winner");
+  document.querySelectorAll(".score")[0].textContent = 0;
+  document.querySelectorAll(".score")[1].textContent = 0;
+  document.querySelectorAll(".current-score")[0].textContent = 0;
+  document.querySelectorAll(".current-score")[1].textContent = 0;
+  // remember that querySelector only applies to the first one that matches its condition
 }
 
-// Event Listeners
 rollDice.addEventListener("click", updateScore);
 holdDice.addEventListener("click", holdScore);
 updateGame.addEventListener("click", newGame);
+
+function winner() {
+  if (parseInt(document.querySelectorAll(".score")[0].textContent) >= 100) {
+    // remember that the text content is in strings.
+    document.querySelector(".player--0").classList.remove("player--active");
+    document.querySelector(".player--0").classList.add("player--winner");
+  }
+
+  if (parseInt(document.querySelectorAll(".score")[1].textContent) >= 100) {
+    document.querySelector(".player--1").classList.remove("player--active");
+    document.querySelector(".player--1").classList.add("player--winner");
+  }
+}
+
+/* Without the parentheses, I am just referencing the function. 
+With it, however, I am calling the function immediately and it thus executes even if 
+I did not click the button. */
